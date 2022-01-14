@@ -5,15 +5,16 @@ const Manager = require("./lib/Manager.js");
 const Engineer = require("./lib/Engineer.js");
 const Intern = require("./lib/Intern.js");
 const { type } = require("os");
+
 let newEmployee
-let newManager
-let managers = []
-let newEngineer
 let employeeRole
-let officeNumber
+let employees = []
+
+
 
 
 function getEmployee() {
+
     inquirer
         .prompt([
 
@@ -39,8 +40,21 @@ function getEmployee() {
 
         .then((data) => {
 
-            newEmployee = new Manager(employeeRole, data.name, data.id, data.email, officeLoc)
+            if (employeeRole === 'Manager'){
+                newEmployee = new Manager(employeeRole, data.name, data.id, data.email, Manager.officeNumber)
             console.log(newEmployee)
+            getRole()
+            }
+            else if (employeeRole === 'Engineer'){
+                newEmployee = new Engineer(employeeRole, data.name, data.id, data.email, Engineer.github)
+            console.log(newEmployee)
+            getRole()
+            }
+
+            else if (employeeRole === 'Intern'){newEmployee = new Intern(employeeRole, data.name, data.id, data.email, Intern.school)
+            console.log(newEmployee)
+            getRole()
+        }
 
         });
 
@@ -66,6 +80,7 @@ function getRole() {
 
             if (employeeRole === 'Manager') {
                 function getOffice() {
+
                     inquirer
                         .prompt([
                             {
@@ -76,7 +91,7 @@ function getRole() {
                             }
                         ])
                         .then((data) => {
-                            officeNumber = data.officeNum
+                            Manager.officeNumber = data.officeNum
                             getEmployee()
                         })
 
@@ -85,22 +100,43 @@ function getRole() {
             else if (employeeRole === 'Engineer') {
                 function getGithub() {
                     inquirer
-                    .prompt([{
+                    .prompt([
+                        {
                         type: 'input',
                         name:'gitHub',
                         message: 'Enter github Url.',
-                    }])
+                    }
+                ]).then((data) =>{
+
+                    Engineer.github = data.gitHub
+                    getEmployee()
+
+                })
                 }
                 getGithub()
-                console.log('Engineer!')
-            } else if (employeeRole === 'Intern') {
-                console.log('Intern!')
-            } else if (employeeRole === 'Finish') {
+                
+            }else if (employeeRole === 'Intern') {
+                function getSchool() {
+                    inquirer
+                    .prompt([
+                        {
+                        type: 'input',
+                        name:'school',
+                        message: 'Enter school name.',
+                    }
+                ]).then((data) =>{
 
+                    Intern.school = data.school
+                    getEmployee()
+
+                })
+                }getSchool()
+                
+            }else if (employeeRole === 'Finish') {
+                console.log()
             }
 
         })
 }
-
 
 getRole()
