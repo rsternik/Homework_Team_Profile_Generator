@@ -6,12 +6,7 @@ const Engineer = require("./lib/Engineer.js");
 const Intern = require("./lib/Intern.js");
 const { type } = require("os");
 
-let newEmployee
-let employeeRole
 let employees = []
-
-
-
 
 function getEmployee() {
 
@@ -38,30 +33,17 @@ function getEmployee() {
 
         ])
 
-        .then((data) => {
+        .then((employeeData) => {
 
-            if (employeeRole === 'Manager'){
-                newEmployee = new Manager(employeeRole, data.name, data.id, data.email, Manager.officeNumber)
-            console.log(newEmployee)
-            getRole()
-            }
-            else if (employeeRole === 'Engineer'){
-                newEmployee = new Engineer(employeeRole, data.name, data.id, data.email, Engineer.github)
-            console.log(newEmployee)
-            getRole()
-            }
-
-            else if (employeeRole === 'Intern'){newEmployee = new Intern(employeeRole, data.name, data.id, data.email, Intern.school)
-            console.log(newEmployee)
-            getRole()
-        }
+            getType(employeeData)
 
         });
 
+     
 
 }
 
-function getRole() {
+function getType(employeeData) {
 
     inquirer
         .prompt([
@@ -69,16 +51,14 @@ function getRole() {
                 message: 'Enter employees role.',
                 type: 'list',
                 name: 'role',
-                choices: ['Manager', 'Engineer', 'Intern', 'Finish'],
+                choices: ['Manager', 'Engineer', 'Intern'],
 
             }
         ])
 
         .then((data) => {
 
-            employeeRole = data.role
-
-            if (employeeRole === 'Manager') {
+            if (data.role === 'Manager') {
                 function getOffice() {
 
                     inquirer
@@ -91,52 +71,86 @@ function getRole() {
                             }
                         ])
                         .then((data) => {
-                            Manager.officeNumber = data.officeNum
-                            getEmployee()
+                            
+                            newEmployee = new Manager(employeeData.name, employeeData.id, employeeData.email, data.officeNum)
+                            employees.push(newEmployee)
+                            console.log(employees)
+                            init()
+                
                         })
 
                 } getOffice()
             }
-            else if (employeeRole === 'Engineer') {
-                function getGithub() {
+            else if (data.role === 'Engineer') {
+                function getUsername() {
                     inquirer
-                    .prompt([
-                        {
-                        type: 'input',
-                        name:'gitHub',
-                        message: 'Enter github Url.',
-                    }
-                ]).then((data) =>{
+                        .prompt([
+                            {
+                                type: 'input',
+                                name: 'github',
+                                message: 'Enter github Username.',
+                            }
+                        ]).then((data) => {
 
-                    Engineer.github = data.gitHub
-                    getEmployee()
+                            newEmployee = new Engineer(employeeData.name, employeeData.id, employeeData.email, data.github)
+                            employees.push(newEmployee)
+                            console.log(employees)
+                            init()
 
-                })
+                        })
                 }
-                getGithub()
-                
-            }else if (employeeRole === 'Intern') {
-                function getSchool() {
+                getUsername()
+
+            } else if (data.role === 'Intern') {
+                function getEducation() {
                     inquirer
-                    .prompt([
-                        {
-                        type: 'input',
-                        name:'school',
-                        message: 'Enter school name.',
-                    }
-                ]).then((data) =>{
+                        .prompt([
+                            {
+                                type: 'input',
+                                name: 'school',
+                                message: 'Enter school name.',
+                            }
+                        ]).then((data) => {
 
-                    Intern.school = data.school
-                    getEmployee()
+                            newEmployee = new Intern(employeeData.name, employeeData.id, employeeData.email, data.school)
+                            employees.push(newEmployee)
+                            console.log(employees)
+                            init()
 
-                })
-                }getSchool()
-                
-            }else if (employeeRole === 'Finish') {
-                console.log()
-            }
+                        })
+                } getEducation()
+
+            } 
 
         })
 }
 
-getRole()
+function init(){
+
+    inquirer
+        .prompt([
+            {
+                message: 'Please make a selection.',
+                type: 'list',
+                name: 'choice',
+                choices: ['Create', 'Finish'],
+
+            }
+        ])
+
+     .then((data) => {
+
+        
+        if (data.choice === 'Create'){
+            getEmployee()
+        }else {
+
+            console.log(employees)
+        }
+
+
+     })
+   
+}
+
+init()
