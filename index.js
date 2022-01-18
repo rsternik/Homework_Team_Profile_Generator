@@ -5,9 +5,11 @@ const Manager = require("./lib/Manager.js");
 const Engineer = require("./lib/Engineer.js");
 const Intern = require("./lib/Intern.js");
 const { type } = require("os");
+const pageTemplate = require("./template.js")
 
 let employees = []
 
+// Gather Standard employee information
 function getEmployee() {
 
     inquirer
@@ -42,7 +44,7 @@ function getEmployee() {
      
 
 }
-
+// Gather Employee Role then output info collection to employees array
 function getType(employeeData) {
 
     inquirer
@@ -124,7 +126,7 @@ function getType(employeeData) {
 
         })
 }
-
+// Choices to create employees or finish. Finish will generate HTML only if data is present
 function init(){
 
     inquirer
@@ -145,7 +147,10 @@ function init(){
             getEmployee()
         }else {
 
-            console.log(employees)
+            
+           fs.writeFileSync("test.html", pageTemplate(employees))
+
+       
         }
 
 
@@ -154,3 +159,4 @@ function init(){
 }
 
 init()
+
