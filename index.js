@@ -148,7 +148,7 @@ function init(){
         }else {
 
             
-           fs.writeFileSync("test.html", pageTemplate(employees))
+           fs.writeFileSync("teamGenerated.html", pageTemplate(employees))
 
        
         }
