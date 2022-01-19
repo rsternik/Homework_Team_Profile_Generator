@@ -1,10 +1,15 @@
+// Required NPM software
 const inquirer = require("inquirer");
 const fs = require('fs');
+const { type } = require("os");
+
+// Required Classes
 const Employee = require("./lib/Employee.js");
 const Manager = require("./lib/Manager.js");
 const Engineer = require("./lib/Engineer.js");
 const Intern = require("./lib/Intern.js");
-const { type } = require("os");
+
+//HTML Generation Template 
 const pageTemplate = require("./template.js")
 
 let employees = []
@@ -12,6 +17,7 @@ let employees = []
 // Gather Standard employee information
 function getEmployee() {
 
+    // Questions
     inquirer
         .prompt([
 
@@ -34,19 +40,20 @@ function getEmployee() {
             },
 
         ])
-
+        // Output 
         .then((employeeData) => {
-
+            // Run getType function with employeeData included to determine role.
             getType(employeeData)
 
         });
 
-     
+
 
 }
 // Gather Employee Role then output info collection to employees array
 function getType(employeeData) {
 
+    // Questions, after information is collected for each choice each function will call getEmployee() function
     inquirer
         .prompt([
             {
@@ -58,9 +65,11 @@ function getType(employeeData) {
             }
         ])
 
+        // Condition to check which role was selected 
         .then((data) => {
-
+            // Manager Choice
             if (data.role === 'Manager') {
+                // Queries user for office number
                 function getOffice() {
 
                     inquirer
@@ -72,18 +81,21 @@ function getType(employeeData) {
 
                             }
                         ])
+                        // Combine all collected user input and push the newEmployee into the employees array
                         .then((data) => {
-                            
+
                             newEmployee = new Manager(employeeData.name, employeeData.id, employeeData.email, data.officeNum)
                             employees.push(newEmployee)
                             console.log(employees)
                             init()
-                
+
                         })
 
                 } getOffice()
             }
+            // Engineer Choice
             else if (data.role === 'Engineer') {
+                // Queries user for guthub username
                 function getUsername() {
                     inquirer
                         .prompt([
@@ -92,7 +104,9 @@ function getType(employeeData) {
                                 name: 'github',
                                 message: 'Enter github Username.',
                             }
-                        ]).then((data) => {
+                        ])
+                        // Combine all collected user input and push the newEmployee into the employees array
+                        .then((data) => {
 
                             newEmployee = new Engineer(employeeData.name, employeeData.id, employeeData.email, data.github)
                             employees.push(newEmployee)
@@ -103,7 +117,10 @@ function getType(employeeData) {
                 }
                 getUsername()
 
-            } else if (data.role === 'Intern') {
+            }
+            // Intern Choice
+            else if (data.role === 'Intern') {
+                // Queries user for school name
                 function getEducation() {
                     inquirer
                         .prompt([
@@ -112,7 +129,9 @@ function getType(employeeData) {
                                 name: 'school',
                                 message: 'Enter school name.',
                             }
-                        ]).then((data) => {
+                        ])
+                        // Combine all collected user input and push the newEmployee into the employees array
+                        .then((data) => {
 
                             newEmployee = new Intern(employeeData.name, employeeData.id, employeeData.email, data.school)
                             employees.push(newEmployee)
@@ -122,13 +141,13 @@ function getType(employeeData) {
                         })
                 } getEducation()
 
-            } 
+            }
 
         })
 }
-// Choices to create employees or finish. Finish will generate HTML only if data is present
-function init(){
-
+// Choices to create employees or finish and generate employee html file. 
+function init() {
+    // Questions
     inquirer
         .prompt([
             {
@@ -140,22 +159,24 @@ function init(){
             }
         ])
 
-     .then((data) => {
+        .then((data) => {
 
-        
-        if (data.choice === 'Create'){
-            getEmployee()
-        }else {
-
-            
-           fs.writeFileSync("teamGenerated.html", pageTemplate(employees))
-
-       
-        }
+            // Runs getEmployee Function
+            if (data.choice === 'Create') {
+                getEmployee()
+            } 
+            // Writes teamGenerated.html using pageTemplate passing data from employees array
+            else {
 
 
-     })
-   
+                fs.writeFileSync("teamGenerated.html", pageTemplate(employees))
+
+
+            }
+
+
+        })
+
 }
 
 init()
